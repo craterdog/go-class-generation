@@ -51,7 +51,7 @@ instance attributes, abstractions and methods that must be supported by each
 instance of a concrete classes-like class.
 */
 type ClassesLike interface {
-	// Public Methods
+	// Primary Methods
 	GetClass() ClassesClassLike
 	GenerateModelClasses(
 		model mod.ModelLike,

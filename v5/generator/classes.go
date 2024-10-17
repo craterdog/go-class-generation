@@ -40,10 +40,10 @@ func (c *classesClass_) Make() ClassesLike {
 
 // INSTANCE INTERFACE
 
-// Public Methods
+// Primary Methods
 
 func (v *classes_) GetClass() ClassesClassLike {
-	return v.getClass()
+	return classesReference()
 }
 
 func (v *classes_) GenerateModelClasses(
@@ -70,10 +70,6 @@ func (v *classes_) GenerateModelClasses(
 }
 
 // Private Methods
-
-func (v *classes_) getClass() *classesClass_ {
-	return classesReference()
-}
 
 func (v *classes_) analyzeClassConstants(
 	classDefinition mod.ClassDefinitionLike,
@@ -120,10 +116,10 @@ func (v *classes_) analyzeClassStructure(
 	v.isIntrinsic_ = false
 	v.intrinsicType_ = nil
 	var instanceMethods = instanceDefinition.GetInstanceMethods()
-	var publicSubsection = instanceMethods.GetPublicSubsection()
-	var publicMethods = publicSubsection.GetPublicMethods().GetIterator()
-	for publicMethods.HasNext() {
-		var method = publicMethods.GetNext().GetMethod()
+	var primarySubsection = instanceMethods.GetPrimarySubsection()
+	var primaryMethods = primarySubsection.GetPrimaryMethods().GetIterator()
+	for primaryMethods.HasNext() {
+		var method = primaryMethods.GetNext().GetMethod()
 		var methodName = method.GetName()
 		if methodName == "GetIntrinsic" {
 			v.isIntrinsic_ = true
@@ -304,7 +300,7 @@ func (v *classes_) extractType(abstraction mod.AbstractionLike) string {
 func (v *classes_) generateAccessFunction() (
 	accessFunction string,
 ) {
-	accessFunction = v.getClass().accessFunction_
+	accessFunction = classesReference().accessFunction_
 	return accessFunction
 }
 
@@ -356,7 +352,7 @@ func (v *classes_) generateAspectInterface(
 			}
 		}
 	}
-	implementation = v.getClass().aspectInterface_
+	implementation = classesReference().aspectInterface_
 	implementation = uti.ReplaceAll(
 		implementation,
 		"aspectType",
@@ -405,9 +401,9 @@ func (v *classes_) generateAspectMethod(
 	}
 	var parameters = v.generateParameters(methodParameters)
 	var resultType = v.generateResult(methodResult)
-	implementation = v.getClass().instanceMethod_
+	implementation = classesReference().instanceMethod_
 	if uti.IsDefined(resultType) {
-		implementation = v.getClass().instanceFunction_
+		implementation = classesReference().instanceFunction_
 		implementation = uti.ReplaceAll(implementation, "resultType", resultType)
 	}
 	implementation = uti.ReplaceAll(implementation, "methodName", methodName)
@@ -441,7 +437,7 @@ func (v *classes_) generateAttributeCheck(parameter mod.ParameterLike) (
 	var attributeName = sts.TrimSuffix(parameterName, "_")
 	// Ignore optional attributes.
 	if !sts.HasPrefix(attributeName, "optional") {
-		var template = v.getClass().attributeCheck_
+		var template = classesReference().attributeCheck_
 		template = uti.ReplaceAll(template, "attributeName", attributeName)
 		implementation += template
 	}
@@ -470,7 +466,7 @@ func (v *classes_) generateAttributeDeclarations() (
 		var attribute = attributes.GetNext()
 		var attributeName = attribute.GetKey()
 		var attributeType = attribute.GetValue()
-		var declaration = v.getClass().attributeDeclaration_
+		var declaration = classesReference().attributeDeclaration_
 		declaration = uti.ReplaceAll(declaration, "attributeName", attributeName)
 		declaration = uti.ReplaceAll(declaration, "attributeType", attributeType)
 		implementation += declaration
@@ -489,7 +485,7 @@ func (v *classes_) generateAttributeInitializations(
 		var parameterName = parameter.GetName()
 		var attributeName = sts.TrimSuffix(parameterName, "_")
 		if uti.IsDefined(v.attributes_.GetValue(attributeName)) {
-			var template = v.getClass().attributeInitialization_
+			var template = classesReference().attributeInitialization_
 			template = uti.ReplaceAll(template, "attributeName", attributeName)
 			implementation += template
 		}
@@ -518,7 +514,7 @@ func (v *classes_) generateAttributeMethods(
 			}
 			methods += method
 		}
-		implementation = v.getClass().attributeMethods_
+		implementation = classesReference().attributeMethods_
 		implementation = uti.ReplaceAll(implementation, "methods", methods)
 	}
 	return implementation
@@ -535,7 +531,7 @@ func (v *classes_) generateClass(
 	v.analyzeClassDefinition(classDefinition, instanceDefinition)
 
 	// Start with the class template.
-	implementation = v.getClass().classTemplate_
+	implementation = classesReference().classTemplate_
 	var notice = v.extractNotice(model)
 	implementation = uti.ReplaceAll(implementation, "notice", notice)
 
@@ -579,6 +575,14 @@ func (v *classes_) generateClass(
 		functionMethods,
 	)
 
+	// Add in the instance primary methods.
+	var primaryMethods = v.generatePrimaryMethods(instanceDefinition)
+	implementation = uti.ReplaceAll(
+		implementation,
+		"primaryMethods",
+		primaryMethods,
+	)
+
 	// Add in the instance attribute methods.
 	var attributeMethods = v.generateAttributeMethods(instanceDefinition)
 	implementation = uti.ReplaceAll(
@@ -600,14 +604,6 @@ func (v *classes_) generateClass(
 		implementation,
 		"aspectInterfaces",
 		aspectInterfaces,
-	)
-
-	// Add in the instance public methods.
-	var publicMethods = v.generatePublicMethods(instanceDefinition)
-	implementation = uti.ReplaceAll(
-		implementation,
-		"publicMethods",
-		publicMethods,
 	)
 
 	// Add in the instance private methods.
@@ -693,9 +689,9 @@ func (v *classes_) generateClass(
 func (v *classes_) generateClassReference() (
 	implementation string,
 ) {
-	implementation = v.getClass().classReference_
+	implementation = classesReference().classReference_
 	if v.isGeneric_ {
-		implementation = v.getClass().classMap_
+		implementation = classesReference().classMap_
 	}
 	var constantInitializations = v.generateConstantInitializations()
 	implementation = uti.ReplaceAll(
@@ -709,7 +705,7 @@ func (v *classes_) generateClassReference() (
 func (v *classes_) generateClassStructure() (
 	implementation string,
 ) {
-	implementation = v.getClass().classStructure_
+	implementation = classesReference().classStructure_
 	var constantDeclarations = v.generateConstantDeclarations()
 	implementation = uti.ReplaceAll(
 		implementation,
@@ -727,7 +723,7 @@ func (v *classes_) generateConstantDeclarations() (
 		var constant = constants.GetNext()
 		var constantName = constant.GetKey()
 		var constantType = constant.GetValue()
-		var declaration = v.getClass().constantDeclaration_
+		var declaration = classesReference().constantDeclaration_
 		declaration = uti.ReplaceAll(declaration, "constantName", constantName)
 		declaration = uti.ReplaceAll(declaration, "constantType", constantType)
 		implementation += declaration
@@ -742,7 +738,7 @@ func (v *classes_) generateConstantInitializations() (
 	for constants.HasNext() {
 		var constant = constants.GetNext()
 		var constantName = constant.GetKey()
-		var initialization = v.getClass().constantInitialization_
+		var initialization = classesReference().constantInitialization_
 		initialization = uti.ReplaceAll(initialization, "constantName", constantName)
 		implementation += initialization
 	}
@@ -754,7 +750,7 @@ func (v *classes_) generateConstantMethod(constantMethod mod.ConstantMethodLike)
 ) {
 	var methodName = constantMethod.GetName()
 	var resultType = v.extractType(constantMethod.GetAbstraction())
-	implementation = v.getClass().constantMethod_
+	implementation = classesReference().constantMethod_
 	implementation = uti.ReplaceAll(implementation, "methodName", methodName)
 	implementation = uti.ReplaceAll(implementation, "resultType", resultType)
 	return implementation
@@ -774,7 +770,7 @@ func (v *classes_) generateConstantMethods(
 			var constantMethod = constantMethods.GetNext()
 			methods += v.generateConstantMethod(constantMethod)
 		}
-		implementation = v.getClass().constantMethods_
+		implementation = classesReference().constantMethods_
 		implementation = uti.ReplaceAll(implementation, "methods", methods)
 	}
 	return implementation
@@ -815,7 +811,7 @@ func (v *classes_) generateConstructorMethod(
 	var parameters = v.generateParameters(constructorParameters)
 	var resultType = v.extractType(constructorMethod.GetAbstraction())
 	var instanceInstantiation = v.generateInstanceInstantiation(constructorMethod)
-	implementation = v.getClass().constructorMethod_
+	implementation = classesReference().constructorMethod_
 	implementation = uti.ReplaceAll(
 		implementation,
 		"methodName",
@@ -852,7 +848,7 @@ func (v *classes_) generateConstructorMethods(
 		var constructorMethod = constructorMethods.GetNext()
 		methods += v.generateConstructorMethod(constructorMethod)
 	}
-	implementation = v.getClass().constructorMethods_
+	implementation = classesReference().constructorMethods_
 	implementation = uti.ReplaceAll(implementation, "methods", methods)
 	return implementation
 }
@@ -863,7 +859,7 @@ func (v *classes_) generateFunctionMethod(functionMethod mod.FunctionMethodLike)
 	var methodName = functionMethod.GetName()
 	var parameters = v.generateParameters(functionMethod.GetParameters())
 	var resultType = v.generateResult(functionMethod.GetResult())
-	implementation = v.getClass().functionMethod_
+	implementation = classesReference().functionMethod_
 	implementation = uti.ReplaceAll(implementation, "methodName", methodName)
 	implementation = uti.ReplaceAll(implementation, "parameters", parameters)
 	implementation = uti.ReplaceAll(implementation, "resultType", resultType)
@@ -884,7 +880,7 @@ func (v *classes_) generateFunctionMethods(
 			var functionMethod = functionMethods.GetNext()
 			methods += v.generateFunctionMethod(functionMethod)
 		}
-		implementation = v.getClass().functionMethods_
+		implementation = classesReference().functionMethods_
 		implementation = uti.ReplaceAll(implementation, "methods", methods)
 	}
 	return implementation
@@ -896,7 +892,7 @@ func (v *classes_) generateGetterMethod(getterMethod mod.GetterMethodLike) (
 	var methodName = getterMethod.GetName()
 	var attributeName = v.extractAttributeName(methodName)
 	var attributeType = v.extractType(getterMethod.GetAbstraction())
-	implementation = v.getClass().getterMethod_
+	implementation = classesReference().getterMethod_
 	implementation = uti.ReplaceAll(implementation, "methodName", methodName)
 	implementation = uti.ReplaceAll(implementation, "attributeName", attributeName)
 	implementation = uti.ReplaceAll(implementation, "attributeType", attributeType)
@@ -911,7 +907,7 @@ func (v *classes_) generateImports(
 ) {
 	var modules = v.generateModules(model, class)
 	if uti.IsDefined(modules) {
-		implementation = v.getClass().moduleImports_
+		implementation = classesReference().moduleImports_
 		implementation = uti.ReplaceAll(implementation, "modules", modules)
 	}
 	return implementation
@@ -923,14 +919,14 @@ func (v *classes_) generateInstanceInstantiation(
 	implementation string,
 ) {
 	var methodName = constructorMethod.GetName()
-	implementation = v.getClass().instanceInstantiation_
+	implementation = classesReference().instanceInstantiation_
 	if v.isIntrinsic_ {
 		if methodName == "Make" {
-			implementation = v.getClass().intrinsicInstantiation_
+			implementation = classesReference().intrinsicInstantiation_
 		}
 	} else {
 		if methodName == "Make" || sts.HasPrefix(methodName, "MakeWith") {
-			implementation = v.getClass().structureInstantiation_
+			implementation = classesReference().structureInstantiation_
 			var constructorParameters = constructorMethod.GetParameters()
 			var attributeChecks = v.generateAttributeChecks(constructorParameters)
 			var attributeInitializations = v.generateAttributeInitializations(
@@ -956,14 +952,14 @@ func (v *classes_) generateInstanceStructure() (
 ) {
 	if v.isIntrinsic_ {
 		var intrinsicType = v.extractType(v.intrinsicType_)
-		implementation = v.getClass().instanceIntrinsic_
+		implementation = classesReference().instanceIntrinsic_
 		implementation = uti.ReplaceAll(
 			implementation,
 			"intrinsicType",
 			intrinsicType,
 		)
 	} else {
-		implementation = v.getClass().instanceStructure_
+		implementation = classesReference().instanceStructure_
 		var attributeDeclarations = v.generateAttributeDeclarations()
 		implementation = uti.ReplaceAll(
 			implementation,
@@ -979,7 +975,7 @@ func (v *classes_) generateIntrinsicMethod() (
 ) {
 	if v.isIntrinsic_ {
 		var intrinsicType = v.extractType(v.intrinsicType_)
-		implementation = v.getClass().intrinsicMethod_
+		implementation = classesReference().intrinsicMethod_
 		implementation = uti.ReplaceAll(
 			implementation,
 			"intrinsicType",
@@ -1005,7 +1001,7 @@ func (v *classes_) generateModules(
 			var prefix = moduleName + "."
 			var modulePath = module.GetPath()
 			if sts.Contains(class, prefix) && !sts.Contains(implementation, prefix) {
-				var alias = v.getClass().moduleAlias_
+				var alias = classesReference().moduleAlias_
 				alias = uti.ReplaceAll(alias, "moduleName", moduleName)
 				alias = uti.ReplaceAll(alias, "modulePath", modulePath)
 				implementation += alias
@@ -1013,31 +1009,31 @@ func (v *classes_) generateModules(
 		}
 	}
 	if sts.Contains(class, "fmt.") && !sts.Contains(implementation, "fmt.") {
-		var alias = v.getClass().moduleAlias_
+		var alias = classesReference().moduleAlias_
 		alias = uti.ReplaceAll(alias, "moduleName", "fmt")
 		alias = uti.ReplaceAll(alias, "modulePath", "\"fmt\"")
 		implementation += alias
 	}
 	if sts.Contains(class, "uti.") && !sts.Contains(implementation, "uti.") {
-		var alias = v.getClass().moduleAlias_
+		var alias = classesReference().moduleAlias_
 		alias = uti.ReplaceAll(alias, "moduleName", "uti")
 		alias = uti.ReplaceAll(alias, "modulePath", "\"github.com/craterdog/go-missing-utilities/v2\"")
 		implementation += alias
 	}
 	if sts.Contains(class, "col.") && !sts.Contains(implementation, "col.") {
-		var alias = v.getClass().moduleAlias_
+		var alias = classesReference().moduleAlias_
 		alias = uti.ReplaceAll(alias, "moduleName", "col")
 		alias = uti.ReplaceAll(alias, "modulePath", "\"github.com/craterdog/go-collection-framework/v4\"")
 		implementation += alias
 	}
 	if sts.Contains(class, "abs.") && !sts.Contains(implementation, "abs.") {
-		var alias = v.getClass().moduleAlias_
+		var alias = classesReference().moduleAlias_
 		alias = uti.ReplaceAll(alias, "moduleName", "abs")
 		alias = uti.ReplaceAll(alias, "modulePath", "\"github.com/craterdog/go-collection-framework/v4/collection\"")
 		implementation += alias
 	}
 	if sts.Contains(class, "syn.") && !sts.Contains(implementation, "syn.") {
-		var alias = v.getClass().moduleAlias_
+		var alias = classesReference().moduleAlias_
 		alias = uti.ReplaceAll(alias, "moduleName", "syn")
 		alias = uti.ReplaceAll(alias, "modulePath", "\"sync\"")
 		implementation += alias
@@ -1052,7 +1048,7 @@ func (v *classes_) generatePackageDeclaration(model mod.ModelLike) (
 	implementation string,
 ) {
 	var packageName = v.extractPackageName(model)
-	implementation = v.getClass().packageDeclaration_
+	implementation = classesReference().packageDeclaration_
 	implementation = uti.ReplaceAll(implementation, "packageName", packageName)
 	return implementation
 }
@@ -1067,7 +1063,7 @@ func (v *classes_) generateParameters(
 		var parameter = iterator.GetNext()
 		var parameterName = parameter.GetName()
 		var parameterType = v.extractType(parameter.GetAbstraction())
-		var template = v.getClass().methodParameter_
+		var template = classesReference().methodParameter_
 		template = uti.ReplaceAll(template, "parameterName", parameterName)
 		template = uti.ReplaceAll(template, "parameterType", parameterType)
 		implementation += template
@@ -1078,16 +1074,16 @@ func (v *classes_) generateParameters(
 	return implementation
 }
 
-func (v *classes_) generatePublicMethod(publicMethod mod.PublicMethodLike) (
+func (v *classes_) generatePrimaryMethod(primaryMethod mod.PrimaryMethodLike) (
 	implementation string,
 ) {
-	var method = publicMethod.GetMethod()
+	var method = primaryMethod.GetMethod()
 	var methodName = method.GetName()
 	var parameters = v.generateParameters(method.GetParameters())
 	var resultType = v.generateResult(method.GetOptionalResult())
-	implementation = v.getClass().instanceMethod_
+	implementation = classesReference().instanceMethod_
 	if uti.IsDefined(resultType) {
-		implementation = v.getClass().instanceFunction_
+		implementation = classesReference().instanceFunction_
 		implementation = uti.ReplaceAll(implementation, "resultType", resultType)
 	}
 	implementation = uti.ReplaceAll(implementation, "methodName", methodName)
@@ -1095,24 +1091,24 @@ func (v *classes_) generatePublicMethod(publicMethod mod.PublicMethodLike) (
 	return implementation
 }
 
-func (v *classes_) generatePublicMethods(
+func (v *classes_) generatePrimaryMethods(
 	instanceDefinition mod.InstanceDefinitionLike,
 ) (
 	implementation string,
 ) {
 	var methods string
 	var instanceMethods = instanceDefinition.GetInstanceMethods()
-	var publicSubsection = instanceMethods.GetPublicSubsection()
-	var publicMethods = publicSubsection.GetPublicMethods().GetIterator()
-	for publicMethods.HasNext() {
-		var publicMethod = publicMethods.GetNext()
-		if publicMethod.GetMethod().GetName() == "GetClass" ||
-			publicMethod.GetMethod().GetName() == "GetIntrinsic" {
+	var primarySubsection = instanceMethods.GetPrimarySubsection()
+	var primaryMethods = primarySubsection.GetPrimaryMethods().GetIterator()
+	for primaryMethods.HasNext() {
+		var primaryMethod = primaryMethods.GetNext()
+		if primaryMethod.GetMethod().GetName() == "GetClass" ||
+			primaryMethod.GetMethod().GetName() == "GetIntrinsic" {
 			continue
 		}
-		methods += v.generatePublicMethod(publicMethod)
+		methods += v.generatePrimaryMethod(primaryMethod)
 	}
-	implementation = v.getClass().publicMethods_
+	implementation = classesReference().primaryMethods_
 	implementation = uti.ReplaceAll(
 		implementation,
 		"methods",
@@ -1132,7 +1128,7 @@ func (v *classes_) generatePrivateMethods(
 ) (
 	implementation string,
 ) {
-	implementation = v.getClass().privateMethods_
+	implementation = classesReference().privateMethods_
 	return implementation
 }
 
@@ -1160,7 +1156,7 @@ func (v *classes_) generateSetterMethod(setterMethod mod.SetterMethodLike) (
 	var parameter = setterMethod.GetParameter()
 	var attributeType = v.extractType(parameter.GetAbstraction())
 	var attributeCheck = v.generateAttributeCheck(parameter)
-	implementation = v.getClass().setterMethod_
+	implementation = classesReference().setterMethod_
 	implementation = uti.ReplaceAll(implementation, "methodName", methodName)
 	implementation = uti.ReplaceAll(implementation, "attributeName", attributeName)
 	implementation = uti.ReplaceAll(implementation, "attributeType", attributeType)
@@ -1321,7 +1317,7 @@ func (v *classes_) replaceResultType(
 	return result
 }
 
-// PRIVATE INTERFACE
+// PROTECTED INTERFACE
 
 // Instance Structure
 
@@ -1356,12 +1352,12 @@ type classesClass_ struct {
 	getterMethod_            string
 	setterMethod_            string
 	aspectInterface_         string
-	publicMethods_           string
-	privateMethods_          string
+	primaryMethods_          string
 	intrinsicMethod_         string
 	instanceMethod_          string
 	instanceFunction_        string
 	methodParameter_         string
+	privateMethods_          string
 	instanceIntrinsic_       string
 	instanceStructure_       string
 	attributeDeclaration_    string
@@ -1386,9 +1382,9 @@ var classesReference_ = &classesClass_{
 
 // CLASS INTERFACE<AccessFunction><ConstructorMethods><ConstantMethods><FunctionMethods>
 
-// INSTANCE INTERFACE<AttributeMethods><AspectInterfaces><PublicMethods><PrivateMethods>
+// INSTANCE INTERFACE<PrimaryMethods><AttributeMethods><AspectInterfaces>
 
-// PRIVATE INTERFACE<InstanceStructure><ClassStructure><ClassReference>
+// PROTECTED INTERFACE<PrivateMethods><InstanceStructure><ClassStructure><ClassReference>
 `,
 
 	packageDeclaration_: `
@@ -1480,21 +1476,13 @@ func (v <*><~className>_<Arguments>) <~MethodName>(
 
 // <AspectType> Methods<Methods>`,
 
-	publicMethods_: `
+	primaryMethods_: `
 
-// Public Methods
+// Primary Methods
 
 func (v <*><~className>_<Arguments>) GetClass() <~ClassName>ClassLike<Arguments> {
-	return v.getClass()
+	return <~className>Reference()
 }<IntrinsicMethod><Methods>`,
-
-	privateMethods_: `
-
-// Private Methods
-
-func (v <*><~className>_<Arguments>) getClass() *<~className>Class_<Arguments> {
-	return <~className>Reference<Arguments>()
-}`,
 
 	intrinsicMethod_: `
 
@@ -1518,6 +1506,12 @@ func (v <*><~className>_<Arguments>) <~MethodName>(<Parameters>) <ResultType> {
 
 	methodParameter_: `
 	<parameterName_> <ParameterType>,`,
+
+	privateMethods_: `
+
+// Private Methods
+
+`,
 
 	instanceIntrinsic_: `
 
