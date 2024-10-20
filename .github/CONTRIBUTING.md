@@ -11,7 +11,7 @@ with any of the following:
 
 ### Submitting a Bug or Enhancement Request
 Please follow the normal Github process for submitting
-[tickets](https://github.com/craterdog/go-class-model/issues)
+[tickets](https://github.com/craterdog/go-class-generation/issues)
 for this project. Include the following with each ticket:
  1. Label it as a _bug_ or _enhancement_.
  1. Provide a brief summary of the problem or suggestion.
@@ -37,7 +37,7 @@ following:
 
 ### Project Related Discussions
 Most project related discussions can happen in the Github
-[discussion area](https://github.com/craterdog/go-class-model/discussions)
+[discussion area](https://github.com/craterdog/go-class-generation/discussions)
 for this project.
 
 Please submit questions and comments to this discussion area rather than

@@ -178,7 +178,9 @@ func (v *classes_) analyzePublicAttributes(
 	}
 }
 
-func (v *classes_) extractAttributeName(accessorName string) string {
+func (v *classes_) extractAttributeName(
+	accessorName string,
+) string {
 	var attributeName string
 	switch {
 	case sts.HasPrefix(accessorName, "Get"):
@@ -250,20 +252,18 @@ func (v *classes_) extractConcreteMappings(
 	return mappings
 }
 
-func (v *classes_) extractNotice(model mod.ModelLike) string {
-	var definition = model.GetModuleDefinition()
-	var notice = definition.GetNotice().GetComment()
-	return notice
-}
-
-func (v *classes_) extractPackageName(model mod.ModelLike) string {
+func (v *classes_) extractPackageName(
+	model mod.ModelLike,
+) string {
 	var definition = model.GetModuleDefinition()
 	var header = definition.GetHeader()
 	var packageName = header.GetName()
 	return packageName
 }
 
-func (v *classes_) extractType(abstraction mod.AbstractionLike) string {
+func (v *classes_) extractType(
+	abstraction mod.AbstractionLike,
+) string {
 	var abstractType string
 	var prefix = abstraction.GetOptionalPrefix()
 	if uti.IsDefined(prefix) {
@@ -430,7 +430,9 @@ func (v *classes_) generateAspectMethods(
 	return implementation
 }
 
-func (v *classes_) generateAttributeCheck(parameter mod.ParameterLike) (
+func (v *classes_) generateAttributeCheck(
+	parameter mod.ParameterLike,
+) (
 	implementation string,
 ) {
 	var parameterName = parameter.GetName()
@@ -532,7 +534,7 @@ func (v *classes_) generateClass(
 
 	// Start with the class template.
 	implementation = classesReference().classTemplate_
-	var notice = v.extractNotice(model)
+	var notice = v.generateNotice(model)
 	implementation = uti.ReplaceAll(implementation, "notice", notice)
 
 	// Add in the package declaration.
@@ -676,7 +678,7 @@ func (v *classes_) generateClass(
 	)
 
 	// Insert any imported modules (this must be done last).
-	var moduleImports = v.generateImports(model, implementation)
+	var moduleImports = v.generateModuleImports(model, implementation)
 	implementation = uti.ReplaceAll(
 		implementation,
 		"moduleImports",
@@ -745,7 +747,9 @@ func (v *classes_) generateConstantInitializations() (
 	return implementation
 }
 
-func (v *classes_) generateConstantMethod(constantMethod mod.ConstantMethodLike) (
+func (v *classes_) generateConstantMethod(
+	constantMethod mod.ConstantMethodLike,
+) (
 	implementation string,
 ) {
 	var methodName = constantMethod.GetName()
@@ -853,7 +857,9 @@ func (v *classes_) generateConstructorMethods(
 	return implementation
 }
 
-func (v *classes_) generateFunctionMethod(functionMethod mod.FunctionMethodLike) (
+func (v *classes_) generateFunctionMethod(
+	functionMethod mod.FunctionMethodLike,
+) (
 	implementation string,
 ) {
 	var methodName = functionMethod.GetName()
@@ -886,7 +892,9 @@ func (v *classes_) generateFunctionMethods(
 	return implementation
 }
 
-func (v *classes_) generateGetterMethod(getterMethod mod.GetterMethodLike) (
+func (v *classes_) generateGetterMethod(
+	getterMethod mod.GetterMethodLike,
+) (
 	implementation string,
 ) {
 	var methodName = getterMethod.GetName()
@@ -896,20 +904,6 @@ func (v *classes_) generateGetterMethod(getterMethod mod.GetterMethodLike) (
 	implementation = uti.ReplaceAll(implementation, "methodName", methodName)
 	implementation = uti.ReplaceAll(implementation, "attributeName", attributeName)
 	implementation = uti.ReplaceAll(implementation, "attributeType", attributeType)
-	return implementation
-}
-
-func (v *classes_) generateImports(
-	model mod.ModelLike,
-	class string,
-) (
-	implementation string,
-) {
-	var modules = v.generateModules(model, class)
-	if uti.IsDefined(modules) {
-		implementation = classesReference().moduleImports_
-		implementation = uti.ReplaceAll(implementation, "modules", modules)
-	}
 	return implementation
 }
 
@@ -985,6 +979,20 @@ func (v *classes_) generateIntrinsicMethod() (
 	return implementation
 }
 
+func (v *classes_) generateModuleImports(
+	model mod.ModelLike,
+	class string,
+) (
+	implementation string,
+) {
+	var modules = v.generateModules(model, class)
+	if uti.IsDefined(modules) {
+		implementation = classesReference().moduleImports_
+		implementation = uti.ReplaceAll(implementation, "modules", modules)
+	}
+	return implementation
+}
+
 func (v *classes_) generateModules(
 	model mod.ModelLike,
 	class string,
@@ -1008,31 +1016,31 @@ func (v *classes_) generateModules(
 			}
 		}
 	}
-	if sts.Contains(class, "fmt.") && !sts.Contains(implementation, "fmt.") {
+	if sts.Contains(class, "fmt.") && !sts.Contains(implementation, "fmt") {
 		var alias = classesReference().moduleAlias_
 		alias = uti.ReplaceAll(alias, "moduleName", "fmt")
 		alias = uti.ReplaceAll(alias, "modulePath", "\"fmt\"")
 		implementation += alias
 	}
-	if sts.Contains(class, "uti.") && !sts.Contains(implementation, "uti.") {
+	if sts.Contains(class, "uti.") && !sts.Contains(implementation, "uti") {
 		var alias = classesReference().moduleAlias_
 		alias = uti.ReplaceAll(alias, "moduleName", "uti")
 		alias = uti.ReplaceAll(alias, "modulePath", "\"github.com/craterdog/go-missing-utilities/v2\"")
 		implementation += alias
 	}
-	if sts.Contains(class, "col.") && !sts.Contains(implementation, "col.") {
+	if sts.Contains(class, "col.") && !sts.Contains(implementation, "col") {
 		var alias = classesReference().moduleAlias_
 		alias = uti.ReplaceAll(alias, "moduleName", "col")
 		alias = uti.ReplaceAll(alias, "modulePath", "\"github.com/craterdog/go-collection-framework/v4\"")
 		implementation += alias
 	}
-	if sts.Contains(class, "abs.") && !sts.Contains(implementation, "abs.") {
+	if sts.Contains(class, "abs.") && !sts.Contains(implementation, "abs") {
 		var alias = classesReference().moduleAlias_
 		alias = uti.ReplaceAll(alias, "moduleName", "abs")
 		alias = uti.ReplaceAll(alias, "modulePath", "\"github.com/craterdog/go-collection-framework/v4/collection\"")
 		implementation += alias
 	}
-	if sts.Contains(class, "syn.") && !sts.Contains(implementation, "syn.") {
+	if sts.Contains(class, "syn.") && !sts.Contains(implementation, "syn") {
 		var alias = classesReference().moduleAlias_
 		alias = uti.ReplaceAll(alias, "moduleName", "syn")
 		alias = uti.ReplaceAll(alias, "modulePath", "\"sync\"")
@@ -1044,7 +1052,17 @@ func (v *classes_) generateModules(
 	return implementation
 }
 
-func (v *classes_) generatePackageDeclaration(model mod.ModelLike) (
+func (v *classes_) generateNotice(
+	model mod.ModelLike,
+) string {
+	var definition = model.GetModuleDefinition()
+	var notice = definition.GetNotice().GetComment()
+	return notice
+}
+
+func (v *classes_) generatePackageDeclaration(
+	model mod.ModelLike,
+) (
 	implementation string,
 ) {
 	var packageName = v.extractPackageName(model)
@@ -1074,7 +1092,9 @@ func (v *classes_) generateParameters(
 	return implementation
 }
 
-func (v *classes_) generatePrimaryMethod(primaryMethod mod.PrimaryMethodLike) (
+func (v *classes_) generatePrimaryMethod(
+	primaryMethod mod.PrimaryMethodLike,
+) (
 	implementation string,
 ) {
 	var method = primaryMethod.GetMethod()
@@ -1148,7 +1168,9 @@ func (v *classes_) generateResult(
 	return implementation
 }
 
-func (v *classes_) generateSetterMethod(setterMethod mod.SetterMethodLike) (
+func (v *classes_) generateSetterMethod(
+	setterMethod mod.SetterMethodLike,
+) (
 	implementation string,
 ) {
 	var methodName = setterMethod.GetName()

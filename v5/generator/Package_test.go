@@ -13,20 +13,18 @@
 package generator_test
 
 import (
-	fmt "fmt"
+	gen "github.com/craterdog/go-class-generation/v5"
 	mod "github.com/craterdog/go-class-model/v5"
 	ass "github.com/stretchr/testify/assert"
 	osx "os"
 	tes "testing"
 )
 
-var inputDirectory = "./"
-var outputDirectory = "../../../go-test-framework/v5/generator/"
+var directory = "../testdata/"
 
-func TestRoundTrips(t *tes.T) {
-	fmt.Println("Round Trip Tests:")
-	var filename = inputDirectory + "Package.go"
-	fmt.Printf("   %v\n", filename)
+func TestGeneration(t *tes.T) {
+	// Read in the class model and validate it.
+	var filename = directory + "Package.go"
 	var bytes, err = osx.ReadFile(filename)
 	if err != nil {
 		panic(err)
@@ -36,10 +34,18 @@ func TestRoundTrips(t *tes.T) {
 	mod.ValidateModel(model)
 	var actual = mod.FormatModel(model)
 	ass.Equal(t, source, actual)
-	filename = outputDirectory + "Package.go"
-	err = osx.WriteFile(filename, bytes, 0644)
-	if err != nil {
-		panic(err)
+
+	// Generate the class files.
+	var classes = gen.GenerateModelClasses(model).GetIterator()
+	for classes.HasNext() {
+		var class = classes.GetNext()
+		var className = class.GetKey()
+		filename = directory + className + ".go"
+		source = class.GetValue()
+		bytes = []byte(source)
+		err = osx.WriteFile(filename, bytes, 0644)
+		if err != nil {
+			panic(err)
+		}
 	}
-	fmt.Println("Done.")
 }
