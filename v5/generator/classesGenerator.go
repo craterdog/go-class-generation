@@ -25,14 +25,14 @@ import (
 
 // Access Function
 
-func Classes() ClassesClassLike {
-	return classesReference()
+func ClassesGenerator() ClassesGeneratorClassLike {
+	return classesGeneratorReference()
 }
 
 // Constructor Methods
 
-func (c *classesClass_) Make() ClassesLike {
-	var instance = &classes_{
+func (c *classesGeneratorClass_) Make() ClassesGeneratorLike {
+	var instance = &classesGenerator_{
 		// Initialize the instance attributes.
 	}
 	return instance
@@ -42,11 +42,11 @@ func (c *classesClass_) Make() ClassesLike {
 
 // Primary Methods
 
-func (v *classes_) GetClass() ClassesClassLike {
-	return classesReference()
+func (v *classesGenerator_) GetClass() ClassesGeneratorClassLike {
+	return classesGeneratorReference()
 }
 
-func (v *classes_) GenerateModelClasses(
+func (v *classesGenerator_) GenerateModelClasses(
 	model mod.ModelLike,
 ) abs.CatalogLike[string, string] {
 	var result_ = col.Catalog[string, string]()
@@ -71,7 +71,7 @@ func (v *classes_) GenerateModelClasses(
 
 // Private Methods
 
-func (v *classes_) analyzeClassConstants(
+func (v *classesGenerator_) analyzeClassConstants(
 	classDefinition mod.ClassDefinitionLike,
 ) {
 	v.constants_ = col.Catalog[string, string]()
@@ -88,7 +88,7 @@ func (v *classes_) analyzeClassConstants(
 	}
 }
 
-func (v *classes_) analyzeClassDefinition(
+func (v *classesGenerator_) analyzeClassDefinition(
 	classDefinition mod.ClassDefinitionLike,
 	instanceDefinition mod.InstanceDefinitionLike,
 ) {
@@ -99,7 +99,7 @@ func (v *classes_) analyzeClassDefinition(
 	v.analyzePrivateAttributes(classDefinition)
 }
 
-func (v *classes_) analyzeClassGenerics(
+func (v *classesGenerator_) analyzeClassGenerics(
 	classDefinition mod.ClassDefinitionLike,
 ) {
 	v.isGeneric_ = false
@@ -110,7 +110,7 @@ func (v *classes_) analyzeClassGenerics(
 	}
 }
 
-func (v *classes_) analyzeClassStructure(
+func (v *classesGenerator_) analyzeClassStructure(
 	instanceDefinition mod.InstanceDefinitionLike,
 ) {
 	v.isIntrinsic_ = false
@@ -129,7 +129,7 @@ func (v *classes_) analyzeClassStructure(
 	}
 }
 
-func (v *classes_) analyzePrivateAttributes(
+func (v *classesGenerator_) analyzePrivateAttributes(
 	classDefinition mod.ClassDefinitionLike,
 ) {
 	var classMethods = classDefinition.GetClassMethods()
@@ -152,7 +152,7 @@ func (v *classes_) analyzePrivateAttributes(
 	}
 }
 
-func (v *classes_) analyzePublicAttributes(
+func (v *classesGenerator_) analyzePublicAttributes(
 	instanceDefinition mod.InstanceDefinitionLike,
 ) {
 	v.attributes_ = col.Catalog[string, string]()
@@ -178,7 +178,7 @@ func (v *classes_) analyzePublicAttributes(
 	}
 }
 
-func (v *classes_) extractAttributeName(
+func (v *classesGenerator_) extractAttributeName(
 	accessorName string,
 ) string {
 	var attributeName string
@@ -212,7 +212,7 @@ func (v *classes_) extractAttributeName(
 	return attributeName
 }
 
-func (v *classes_) extractClassName(
+func (v *classesGenerator_) extractClassName(
 	classDefinition mod.ClassDefinitionLike,
 ) string {
 	var className = classDefinition.GetDeclaration().GetName()
@@ -221,7 +221,7 @@ func (v *classes_) extractClassName(
 	return className
 }
 
-func (v *classes_) extractConcreteMappings(
+func (v *classesGenerator_) extractConcreteMappings(
 	constraints mod.ConstraintsLike,
 	arguments mod.ArgumentsLike,
 ) abs.CatalogLike[string, mod.AbstractionLike] {
@@ -252,7 +252,7 @@ func (v *classes_) extractConcreteMappings(
 	return mappings
 }
 
-func (v *classes_) extractPackageName(
+func (v *classesGenerator_) extractPackageName(
 	model mod.ModelLike,
 ) string {
 	var definition = model.GetModuleDefinition()
@@ -261,7 +261,7 @@ func (v *classes_) extractPackageName(
 	return packageName
 }
 
-func (v *classes_) extractType(
+func (v *classesGenerator_) extractType(
 	abstraction mod.AbstractionLike,
 ) string {
 	var abstractType string
@@ -297,14 +297,14 @@ func (v *classes_) extractType(
 	return abstractType
 }
 
-func (v *classes_) generateAccessFunction() (
+func (v *classesGenerator_) generateAccessFunction() (
 	accessFunction string,
 ) {
-	accessFunction = classesReference().accessFunction_
+	accessFunction = classesGeneratorReference().accessFunction_
 	return accessFunction
 }
 
-func (v *classes_) generateArguments(
+func (v *classesGenerator_) generateArguments(
 	classDefinition mod.ClassDefinitionLike,
 ) (
 	arguments string,
@@ -327,7 +327,7 @@ func (v *classes_) generateArguments(
 	return arguments
 }
 
-func (v *classes_) generateAspectInterface(
+func (v *classesGenerator_) generateAspectInterface(
 	aspectType mod.AbstractionLike,
 	aspectSection mod.AspectSectionLike,
 ) (
@@ -352,7 +352,7 @@ func (v *classes_) generateAspectInterface(
 			}
 		}
 	}
-	implementation = classesReference().aspectInterface_
+	implementation = classesGeneratorReference().aspectInterface_
 	implementation = uti.ReplaceAll(
 		implementation,
 		"aspectType",
@@ -366,7 +366,7 @@ func (v *classes_) generateAspectInterface(
 	return implementation
 }
 
-func (v *classes_) generateAspectInterfaces(
+func (v *classesGenerator_) generateAspectInterfaces(
 	aspectSection mod.AspectSectionLike,
 	aspectSubsection mod.AspectSubsectionLike,
 ) (
@@ -382,7 +382,7 @@ func (v *classes_) generateAspectInterfaces(
 	return implementation
 }
 
-func (v *classes_) generateAspectMethod(
+func (v *classesGenerator_) generateAspectMethod(
 	aspectType mod.AbstractionLike,
 	aspectMethod mod.AspectMethodLike,
 	mappings abs.CatalogLike[string, mod.AbstractionLike],
@@ -401,9 +401,9 @@ func (v *classes_) generateAspectMethod(
 	}
 	var parameters = v.generateParameters(methodParameters)
 	var resultType = v.generateResult(methodResult)
-	implementation = classesReference().instanceMethod_
+	implementation = classesGeneratorReference().instanceMethod_
 	if uti.IsDefined(resultType) {
-		implementation = classesReference().instanceFunction_
+		implementation = classesGeneratorReference().instanceFunction_
 		implementation = uti.ReplaceAll(implementation, "resultType", resultType)
 	}
 	implementation = uti.ReplaceAll(implementation, "methodName", methodName)
@@ -411,7 +411,7 @@ func (v *classes_) generateAspectMethod(
 	return implementation
 }
 
-func (v *classes_) generateAspectMethods(
+func (v *classesGenerator_) generateAspectMethods(
 	aspectType mod.AbstractionLike,
 	aspectDefinition mod.AspectDefinitionLike,
 	mappings abs.CatalogLike[string, mod.AbstractionLike],
@@ -430,7 +430,7 @@ func (v *classes_) generateAspectMethods(
 	return implementation
 }
 
-func (v *classes_) generateAttributeCheck(
+func (v *classesGenerator_) generateAttributeCheck(
 	parameter mod.ParameterLike,
 ) (
 	implementation string,
@@ -439,14 +439,14 @@ func (v *classes_) generateAttributeCheck(
 	var attributeName = sts.TrimSuffix(parameterName, "_")
 	// Ignore optional attributes.
 	if !sts.HasPrefix(attributeName, "optional") {
-		var template = classesReference().attributeCheck_
+		var template = classesGeneratorReference().attributeCheck_
 		template = uti.ReplaceAll(template, "attributeName", attributeName)
 		implementation += template
 	}
 	return implementation
 }
 
-func (v *classes_) generateAttributeChecks(
+func (v *classesGenerator_) generateAttributeChecks(
 	parameters abs.Sequential[mod.ParameterLike],
 ) (
 	implementation string,
@@ -460,7 +460,7 @@ func (v *classes_) generateAttributeChecks(
 	return implementation
 }
 
-func (v *classes_) generateAttributeDeclarations() (
+func (v *classesGenerator_) generateAttributeDeclarations() (
 	implementation string,
 ) {
 	var attributes = v.attributes_.GetIterator()
@@ -468,7 +468,7 @@ func (v *classes_) generateAttributeDeclarations() (
 		var attribute = attributes.GetNext()
 		var attributeName = attribute.GetKey()
 		var attributeType = attribute.GetValue()
-		var declaration = classesReference().attributeDeclaration_
+		var declaration = classesGeneratorReference().attributeDeclaration_
 		declaration = uti.ReplaceAll(declaration, "attributeName", attributeName)
 		declaration = uti.ReplaceAll(declaration, "attributeType", attributeType)
 		implementation += declaration
@@ -476,7 +476,7 @@ func (v *classes_) generateAttributeDeclarations() (
 	return implementation
 }
 
-func (v *classes_) generateAttributeInitializations(
+func (v *classesGenerator_) generateAttributeInitializations(
 	parameters abs.Sequential[mod.ParameterLike],
 ) (
 	implementation string,
@@ -487,7 +487,7 @@ func (v *classes_) generateAttributeInitializations(
 		var parameterName = parameter.GetName()
 		var attributeName = sts.TrimSuffix(parameterName, "_")
 		if uti.IsDefined(v.attributes_.GetValue(attributeName)) {
-			var template = classesReference().attributeInitialization_
+			var template = classesGeneratorReference().attributeInitialization_
 			template = uti.ReplaceAll(template, "attributeName", attributeName)
 			implementation += template
 		}
@@ -495,7 +495,7 @@ func (v *classes_) generateAttributeInitializations(
 	return implementation
 }
 
-func (v *classes_) generateAttributeMethods(
+func (v *classesGenerator_) generateAttributeMethods(
 	instanceDefinition mod.InstanceDefinitionLike,
 ) (
 	implementation string,
@@ -516,13 +516,13 @@ func (v *classes_) generateAttributeMethods(
 			}
 			methods += method
 		}
-		implementation = classesReference().attributeMethods_
+		implementation = classesGeneratorReference().attributeMethods_
 		implementation = uti.ReplaceAll(implementation, "methods", methods)
 	}
 	return implementation
 }
 
-func (v *classes_) generateClass(
+func (v *classesGenerator_) generateClass(
 	model mod.ModelLike,
 	classDefinition mod.ClassDefinitionLike,
 	instanceDefinition mod.InstanceDefinitionLike,
@@ -533,7 +533,7 @@ func (v *classes_) generateClass(
 	v.analyzeClassDefinition(classDefinition, instanceDefinition)
 
 	// Start with the class template.
-	implementation = classesReference().classTemplate_
+	implementation = classesGeneratorReference().classTemplate_
 	var notice = v.generateNotice(model)
 	implementation = uti.ReplaceAll(implementation, "notice", notice)
 
@@ -688,12 +688,12 @@ func (v *classes_) generateClass(
 	return implementation
 }
 
-func (v *classes_) generateClassReference() (
+func (v *classesGenerator_) generateClassReference() (
 	implementation string,
 ) {
-	implementation = classesReference().classReference_
+	implementation = classesGeneratorReference().classReference_
 	if v.isGeneric_ {
-		implementation = classesReference().classMap_
+		implementation = classesGeneratorReference().classMap_
 	}
 	var constantInitializations = v.generateConstantInitializations()
 	implementation = uti.ReplaceAll(
@@ -704,10 +704,10 @@ func (v *classes_) generateClassReference() (
 	return implementation
 }
 
-func (v *classes_) generateClassStructure() (
+func (v *classesGenerator_) generateClassStructure() (
 	implementation string,
 ) {
-	implementation = classesReference().classStructure_
+	implementation = classesGeneratorReference().classStructure_
 	var constantDeclarations = v.generateConstantDeclarations()
 	implementation = uti.ReplaceAll(
 		implementation,
@@ -717,7 +717,7 @@ func (v *classes_) generateClassStructure() (
 	return implementation
 }
 
-func (v *classes_) generateConstantDeclarations() (
+func (v *classesGenerator_) generateConstantDeclarations() (
 	implementation string,
 ) {
 	var constants = v.constants_.GetIterator()
@@ -725,7 +725,7 @@ func (v *classes_) generateConstantDeclarations() (
 		var constant = constants.GetNext()
 		var constantName = constant.GetKey()
 		var constantType = constant.GetValue()
-		var declaration = classesReference().constantDeclaration_
+		var declaration = classesGeneratorReference().constantDeclaration_
 		declaration = uti.ReplaceAll(declaration, "constantName", constantName)
 		declaration = uti.ReplaceAll(declaration, "constantType", constantType)
 		implementation += declaration
@@ -733,34 +733,34 @@ func (v *classes_) generateConstantDeclarations() (
 	return implementation
 }
 
-func (v *classes_) generateConstantInitializations() (
+func (v *classesGenerator_) generateConstantInitializations() (
 	implementation string,
 ) {
 	var constants = v.constants_.GetIterator()
 	for constants.HasNext() {
 		var constant = constants.GetNext()
 		var constantName = constant.GetKey()
-		var initialization = classesReference().constantInitialization_
+		var initialization = classesGeneratorReference().constantInitialization_
 		initialization = uti.ReplaceAll(initialization, "constantName", constantName)
 		implementation += initialization
 	}
 	return implementation
 }
 
-func (v *classes_) generateConstantMethod(
+func (v *classesGenerator_) generateConstantMethod(
 	constantMethod mod.ConstantMethodLike,
 ) (
 	implementation string,
 ) {
 	var methodName = constantMethod.GetName()
 	var resultType = v.extractType(constantMethod.GetAbstraction())
-	implementation = classesReference().constantMethod_
+	implementation = classesGeneratorReference().constantMethod_
 	implementation = uti.ReplaceAll(implementation, "methodName", methodName)
 	implementation = uti.ReplaceAll(implementation, "resultType", resultType)
 	return implementation
 }
 
-func (v *classes_) generateConstantMethods(
+func (v *classesGenerator_) generateConstantMethods(
 	classDefinition mod.ClassDefinitionLike,
 ) (
 	implementation string,
@@ -774,13 +774,13 @@ func (v *classes_) generateConstantMethods(
 			var constantMethod = constantMethods.GetNext()
 			methods += v.generateConstantMethod(constantMethod)
 		}
-		implementation = classesReference().constantMethods_
+		implementation = classesGeneratorReference().constantMethods_
 		implementation = uti.ReplaceAll(implementation, "methods", methods)
 	}
 	return implementation
 }
 
-func (v *classes_) generateConstraints(
+func (v *classesGenerator_) generateConstraints(
 	classDefinition mod.ClassDefinitionLike,
 ) (
 	constraints string,
@@ -805,7 +805,7 @@ func (v *classes_) generateConstraints(
 	return constraints
 }
 
-func (v *classes_) generateConstructorMethod(
+func (v *classesGenerator_) generateConstructorMethod(
 	constructorMethod mod.ConstructorMethodLike,
 ) (
 	implementation string,
@@ -815,7 +815,7 @@ func (v *classes_) generateConstructorMethod(
 	var parameters = v.generateParameters(constructorParameters)
 	var resultType = v.extractType(constructorMethod.GetAbstraction())
 	var instanceInstantiation = v.generateInstanceInstantiation(constructorMethod)
-	implementation = classesReference().constructorMethod_
+	implementation = classesGeneratorReference().constructorMethod_
 	implementation = uti.ReplaceAll(
 		implementation,
 		"methodName",
@@ -839,7 +839,7 @@ func (v *classes_) generateConstructorMethod(
 	return implementation
 }
 
-func (v *classes_) generateConstructorMethods(
+func (v *classesGenerator_) generateConstructorMethods(
 	classDefinition mod.ClassDefinitionLike,
 ) (
 	implementation string,
@@ -852,12 +852,12 @@ func (v *classes_) generateConstructorMethods(
 		var constructorMethod = constructorMethods.GetNext()
 		methods += v.generateConstructorMethod(constructorMethod)
 	}
-	implementation = classesReference().constructorMethods_
+	implementation = classesGeneratorReference().constructorMethods_
 	implementation = uti.ReplaceAll(implementation, "methods", methods)
 	return implementation
 }
 
-func (v *classes_) generateFunctionMethod(
+func (v *classesGenerator_) generateFunctionMethod(
 	functionMethod mod.FunctionMethodLike,
 ) (
 	implementation string,
@@ -865,14 +865,14 @@ func (v *classes_) generateFunctionMethod(
 	var methodName = functionMethod.GetName()
 	var parameters = v.generateParameters(functionMethod.GetParameters())
 	var resultType = v.generateResult(functionMethod.GetResult())
-	implementation = classesReference().functionMethod_
+	implementation = classesGeneratorReference().functionMethod_
 	implementation = uti.ReplaceAll(implementation, "methodName", methodName)
 	implementation = uti.ReplaceAll(implementation, "parameters", parameters)
 	implementation = uti.ReplaceAll(implementation, "resultType", resultType)
 	return implementation
 }
 
-func (v *classes_) generateFunctionMethods(
+func (v *classesGenerator_) generateFunctionMethods(
 	classDefinition mod.ClassDefinitionLike,
 ) (
 	implementation string,
@@ -886,13 +886,13 @@ func (v *classes_) generateFunctionMethods(
 			var functionMethod = functionMethods.GetNext()
 			methods += v.generateFunctionMethod(functionMethod)
 		}
-		implementation = classesReference().functionMethods_
+		implementation = classesGeneratorReference().functionMethods_
 		implementation = uti.ReplaceAll(implementation, "methods", methods)
 	}
 	return implementation
 }
 
-func (v *classes_) generateGetterMethod(
+func (v *classesGenerator_) generateGetterMethod(
 	getterMethod mod.GetterMethodLike,
 ) (
 	implementation string,
@@ -900,27 +900,27 @@ func (v *classes_) generateGetterMethod(
 	var methodName = getterMethod.GetName()
 	var attributeName = v.extractAttributeName(methodName)
 	var attributeType = v.extractType(getterMethod.GetAbstraction())
-	implementation = classesReference().getterMethod_
+	implementation = classesGeneratorReference().getterMethod_
 	implementation = uti.ReplaceAll(implementation, "methodName", methodName)
 	implementation = uti.ReplaceAll(implementation, "attributeName", attributeName)
 	implementation = uti.ReplaceAll(implementation, "attributeType", attributeType)
 	return implementation
 }
 
-func (v *classes_) generateInstanceInstantiation(
+func (v *classesGenerator_) generateInstanceInstantiation(
 	constructorMethod mod.ConstructorMethodLike,
 ) (
 	implementation string,
 ) {
 	var methodName = constructorMethod.GetName()
-	implementation = classesReference().instanceInstantiation_
+	implementation = classesGeneratorReference().instanceInstantiation_
 	if v.isIntrinsic_ {
 		if methodName == "Make" {
-			implementation = classesReference().intrinsicInstantiation_
+			implementation = classesGeneratorReference().intrinsicInstantiation_
 		}
 	} else {
 		if methodName == "Make" || sts.HasPrefix(methodName, "MakeWith") {
-			implementation = classesReference().structureInstantiation_
+			implementation = classesGeneratorReference().structureInstantiation_
 			var constructorParameters = constructorMethod.GetParameters()
 			var attributeChecks = v.generateAttributeChecks(constructorParameters)
 			var attributeInitializations = v.generateAttributeInitializations(
@@ -941,19 +941,19 @@ func (v *classes_) generateInstanceInstantiation(
 	return implementation
 }
 
-func (v *classes_) generateInstanceStructure() (
+func (v *classesGenerator_) generateInstanceStructure() (
 	implementation string,
 ) {
 	if v.isIntrinsic_ {
 		var intrinsicType = v.extractType(v.intrinsicType_)
-		implementation = classesReference().instanceIntrinsic_
+		implementation = classesGeneratorReference().instanceIntrinsic_
 		implementation = uti.ReplaceAll(
 			implementation,
 			"intrinsicType",
 			intrinsicType,
 		)
 	} else {
-		implementation = classesReference().instanceStructure_
+		implementation = classesGeneratorReference().instanceStructure_
 		var attributeDeclarations = v.generateAttributeDeclarations()
 		implementation = uti.ReplaceAll(
 			implementation,
@@ -964,12 +964,12 @@ func (v *classes_) generateInstanceStructure() (
 	return implementation
 }
 
-func (v *classes_) generateIntrinsicMethod() (
+func (v *classesGenerator_) generateIntrinsicMethod() (
 	implementation string,
 ) {
 	if v.isIntrinsic_ {
 		var intrinsicType = v.extractType(v.intrinsicType_)
-		implementation = classesReference().intrinsicMethod_
+		implementation = classesGeneratorReference().intrinsicMethod_
 		implementation = uti.ReplaceAll(
 			implementation,
 			"intrinsicType",
@@ -979,7 +979,7 @@ func (v *classes_) generateIntrinsicMethod() (
 	return implementation
 }
 
-func (v *classes_) generateModuleImports(
+func (v *classesGenerator_) generateModuleImports(
 	model mod.ModelLike,
 	class string,
 ) (
@@ -987,13 +987,13 @@ func (v *classes_) generateModuleImports(
 ) {
 	var modules = v.generateModules(model, class)
 	if uti.IsDefined(modules) {
-		implementation = classesReference().moduleImports_
+		implementation = classesGeneratorReference().moduleImports_
 		implementation = uti.ReplaceAll(implementation, "modules", modules)
 	}
 	return implementation
 }
 
-func (v *classes_) generateModules(
+func (v *classesGenerator_) generateModules(
 	model mod.ModelLike,
 	class string,
 ) (
@@ -1009,7 +1009,7 @@ func (v *classes_) generateModules(
 			var prefix = moduleName + "."
 			var modulePath = module.GetPath()
 			if sts.Contains(class, prefix) && !sts.Contains(implementation, prefix) {
-				var alias = classesReference().moduleAlias_
+				var alias = classesGeneratorReference().moduleAlias_
 				alias = uti.ReplaceAll(alias, "moduleName", moduleName)
 				alias = uti.ReplaceAll(alias, "modulePath", modulePath)
 				implementation += alias
@@ -1017,31 +1017,31 @@ func (v *classes_) generateModules(
 		}
 	}
 	if sts.Contains(class, "fmt.") && !sts.Contains(implementation, "fmt") {
-		var alias = classesReference().moduleAlias_
+		var alias = classesGeneratorReference().moduleAlias_
 		alias = uti.ReplaceAll(alias, "moduleName", "fmt")
 		alias = uti.ReplaceAll(alias, "modulePath", "\"fmt\"")
 		implementation += alias
 	}
 	if sts.Contains(class, "uti.") && !sts.Contains(implementation, "uti") {
-		var alias = classesReference().moduleAlias_
+		var alias = classesGeneratorReference().moduleAlias_
 		alias = uti.ReplaceAll(alias, "moduleName", "uti")
 		alias = uti.ReplaceAll(alias, "modulePath", "\"github.com/craterdog/go-missing-utilities/v2\"")
 		implementation += alias
 	}
 	if sts.Contains(class, "col.") && !sts.Contains(implementation, "col") {
-		var alias = classesReference().moduleAlias_
+		var alias = classesGeneratorReference().moduleAlias_
 		alias = uti.ReplaceAll(alias, "moduleName", "col")
 		alias = uti.ReplaceAll(alias, "modulePath", "\"github.com/craterdog/go-collection-framework/v4\"")
 		implementation += alias
 	}
 	if sts.Contains(class, "abs.") && !sts.Contains(implementation, "abs") {
-		var alias = classesReference().moduleAlias_
+		var alias = classesGeneratorReference().moduleAlias_
 		alias = uti.ReplaceAll(alias, "moduleName", "abs")
 		alias = uti.ReplaceAll(alias, "modulePath", "\"github.com/craterdog/go-collection-framework/v4/collection\"")
 		implementation += alias
 	}
 	if sts.Contains(class, "syn.") && !sts.Contains(implementation, "syn") {
-		var alias = classesReference().moduleAlias_
+		var alias = classesGeneratorReference().moduleAlias_
 		alias = uti.ReplaceAll(alias, "moduleName", "syn")
 		alias = uti.ReplaceAll(alias, "modulePath", "\"sync\"")
 		implementation += alias
@@ -1052,7 +1052,7 @@ func (v *classes_) generateModules(
 	return implementation
 }
 
-func (v *classes_) generateNotice(
+func (v *classesGenerator_) generateNotice(
 	model mod.ModelLike,
 ) string {
 	var definition = model.GetModuleDefinition()
@@ -1060,18 +1060,18 @@ func (v *classes_) generateNotice(
 	return notice
 }
 
-func (v *classes_) generatePackageDeclaration(
+func (v *classesGenerator_) generatePackageDeclaration(
 	model mod.ModelLike,
 ) (
 	implementation string,
 ) {
 	var packageName = v.extractPackageName(model)
-	implementation = classesReference().packageDeclaration_
+	implementation = classesGeneratorReference().packageDeclaration_
 	implementation = uti.ReplaceAll(implementation, "packageName", packageName)
 	return implementation
 }
 
-func (v *classes_) generateParameters(
+func (v *classesGenerator_) generateParameters(
 	parameters abs.Sequential[mod.ParameterLike],
 ) (
 	implementation string,
@@ -1081,7 +1081,7 @@ func (v *classes_) generateParameters(
 		var parameter = iterator.GetNext()
 		var parameterName = parameter.GetName()
 		var parameterType = v.extractType(parameter.GetAbstraction())
-		var template = classesReference().methodParameter_
+		var template = classesGeneratorReference().methodParameter_
 		template = uti.ReplaceAll(template, "parameterName", parameterName)
 		template = uti.ReplaceAll(template, "parameterType", parameterType)
 		implementation += template
@@ -1092,7 +1092,7 @@ func (v *classes_) generateParameters(
 	return implementation
 }
 
-func (v *classes_) generatePrimaryMethod(
+func (v *classesGenerator_) generatePrimaryMethod(
 	primaryMethod mod.PrimaryMethodLike,
 ) (
 	implementation string,
@@ -1101,9 +1101,9 @@ func (v *classes_) generatePrimaryMethod(
 	var methodName = method.GetName()
 	var parameters = v.generateParameters(method.GetParameters())
 	var resultType = v.generateResult(method.GetOptionalResult())
-	implementation = classesReference().instanceMethod_
+	implementation = classesGeneratorReference().instanceMethod_
 	if uti.IsDefined(resultType) {
-		implementation = classesReference().instanceFunction_
+		implementation = classesGeneratorReference().instanceFunction_
 		implementation = uti.ReplaceAll(implementation, "resultType", resultType)
 	}
 	implementation = uti.ReplaceAll(implementation, "methodName", methodName)
@@ -1111,7 +1111,7 @@ func (v *classes_) generatePrimaryMethod(
 	return implementation
 }
 
-func (v *classes_) generatePrimaryMethods(
+func (v *classesGenerator_) generatePrimaryMethods(
 	instanceDefinition mod.InstanceDefinitionLike,
 ) (
 	implementation string,
@@ -1128,7 +1128,7 @@ func (v *classes_) generatePrimaryMethods(
 		}
 		methods += v.generatePrimaryMethod(primaryMethod)
 	}
-	implementation = classesReference().primaryMethods_
+	implementation = classesGeneratorReference().primaryMethods_
 	implementation = uti.ReplaceAll(
 		implementation,
 		"methods",
@@ -1143,16 +1143,16 @@ func (v *classes_) generatePrimaryMethods(
 	return implementation
 }
 
-func (v *classes_) generatePrivateMethods(
+func (v *classesGenerator_) generatePrivateMethods(
 	instance mod.InstanceDefinitionLike,
 ) (
 	implementation string,
 ) {
-	implementation = classesReference().privateMethods_
+	implementation = classesGeneratorReference().privateMethods_
 	return implementation
 }
 
-func (v *classes_) generateResult(
+func (v *classesGenerator_) generateResult(
 	result mod.ResultLike,
 ) (
 	implementation string,
@@ -1168,7 +1168,7 @@ func (v *classes_) generateResult(
 	return implementation
 }
 
-func (v *classes_) generateSetterMethod(
+func (v *classesGenerator_) generateSetterMethod(
 	setterMethod mod.SetterMethodLike,
 ) (
 	implementation string,
@@ -1178,7 +1178,7 @@ func (v *classes_) generateSetterMethod(
 	var parameter = setterMethod.GetParameter()
 	var attributeType = v.extractType(parameter.GetAbstraction())
 	var attributeCheck = v.generateAttributeCheck(parameter)
-	implementation = classesReference().setterMethod_
+	implementation = classesGeneratorReference().setterMethod_
 	implementation = uti.ReplaceAll(implementation, "methodName", methodName)
 	implementation = uti.ReplaceAll(implementation, "attributeName", attributeName)
 	implementation = uti.ReplaceAll(implementation, "attributeType", attributeType)
@@ -1186,7 +1186,7 @@ func (v *classes_) generateSetterMethod(
 	return implementation
 }
 
-func (v *classes_) replaceAbstractionType(
+func (v *classesGenerator_) replaceAbstractionType(
 	abstraction mod.AbstractionLike,
 	mappings abs.CatalogLike[string, mod.AbstractionLike],
 ) mod.AbstractionLike {
@@ -1225,7 +1225,7 @@ func (v *classes_) replaceAbstractionType(
 	return abstraction
 }
 
-func (v *classes_) replaceArgumentType(
+func (v *classesGenerator_) replaceArgumentType(
 	argument mod.ArgumentLike,
 	mappings abs.CatalogLike[string, mod.AbstractionLike],
 ) mod.ArgumentLike {
@@ -1235,7 +1235,7 @@ func (v *classes_) replaceArgumentType(
 	return argument
 }
 
-func (v *classes_) replaceArgumentTypes(
+func (v *classesGenerator_) replaceArgumentTypes(
 	arguments mod.ArgumentsLike,
 	mappings abs.CatalogLike[string, mod.AbstractionLike],
 ) mod.ArgumentsLike {
@@ -1259,7 +1259,7 @@ func (v *classes_) replaceArgumentTypes(
 	return arguments
 }
 
-func (v *classes_) replaceParameterizedTypes(
+func (v *classesGenerator_) replaceParameterizedTypes(
 	parameterized mod.ParameterizedLike,
 	mappings abs.CatalogLike[string, mod.AbstractionLike],
 ) mod.ParameterizedLike {
@@ -1269,7 +1269,7 @@ func (v *classes_) replaceParameterizedTypes(
 	return parameterized
 }
 
-func (v *classes_) replaceParameterType(
+func (v *classesGenerator_) replaceParameterType(
 	parameter mod.ParameterLike,
 	mappings abs.CatalogLike[string, mod.AbstractionLike],
 ) mod.ParameterLike {
@@ -1280,7 +1280,7 @@ func (v *classes_) replaceParameterType(
 	return parameter
 }
 
-func (v *classes_) replaceParameterTypes(
+func (v *classesGenerator_) replaceParameterTypes(
 	parameters abs.Sequential[mod.ParameterLike],
 	mappings abs.CatalogLike[string, mod.AbstractionLike],
 ) abs.Sequential[mod.ParameterLike] {
@@ -1294,7 +1294,7 @@ func (v *classes_) replaceParameterTypes(
 	return replacedParameters
 }
 
-func (v *classes_) replacePrefixType(
+func (v *classesGenerator_) replacePrefixType(
 	prefix mod.PrefixLike,
 	mappings abs.CatalogLike[string, mod.AbstractionLike],
 ) mod.PrefixLike {
@@ -1312,7 +1312,7 @@ func (v *classes_) replacePrefixType(
 	return prefix
 }
 
-func (v *classes_) replaceResultType(
+func (v *classesGenerator_) replaceResultType(
 	result mod.ResultLike,
 	mappings abs.CatalogLike[string, mod.AbstractionLike],
 ) mod.ResultLike {
@@ -1343,7 +1343,7 @@ func (v *classes_) replaceResultType(
 
 // Instance Structure
 
-type classes_ struct {
+type classesGenerator_ struct {
 	// Declare the instance attributes.
 	isGeneric_     bool
 	isIntrinsic_   bool
@@ -1354,7 +1354,7 @@ type classes_ struct {
 
 // Class Structure
 
-type classesClass_ struct {
+type classesGeneratorClass_ struct {
 	// Declare the class constants.
 	classTemplate_           string
 	packageDeclaration_      string
@@ -1394,11 +1394,11 @@ type classesClass_ struct {
 
 // Class Reference
 
-func classesReference() *classesClass_ {
-	return classesReference_
+func classesGeneratorReference() *classesGeneratorClass_ {
+	return classesGeneratorReference_
 }
 
-var classesReference_ = &classesClass_{
+var classesGeneratorReference_ = &classesGeneratorClass_{
 	// Initialize the class constants.
 	classTemplate_: `<Notice><PackageDeclaration><ModuleImports>
 

@@ -31,23 +31,23 @@ import (
 // TYPE ALIASES
 
 type (
-	ClassesLike = gen.ClassesLike
+	ClassesGeneratorLike = gen.ClassesGeneratorLike
 )
 
 // UNIVERSAL CONSTRUCTORS
 
-func Classes(args ...any) ClassesLike {
+func ClassesGenerator(args ...any) ClassesGeneratorLike {
 	if len(args) > 0 {
-		panic("The \"classes\" constructor does not take any arguments.")
+		panic("The \"classes\" generator constructor does not take any arguments.")
 	}
-	var classes = gen.Classes().Make()
-	return classes
+	var generator = gen.ClassesGenerator().Make()
+	return generator
 }
 
 // GLOBAL FUNCTIONS
 
 func GenerateModelClasses(model mod.ModelLike) abs.CatalogLike[string, string] {
-	var generator = Classes()
+	var generator = ClassesGenerator()
 	var catalog = generator.GenerateModelClasses(model)
 	return catalog
 }

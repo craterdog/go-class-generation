@@ -13,7 +13,7 @@
 package generator_test
 
 import (
-	gen "github.com/craterdog/go-class-generation/v5"
+	gen "github.com/craterdog/go-class-generation/v5/generator"
 	mod "github.com/craterdog/go-class-model/v5"
 	ass "github.com/stretchr/testify/assert"
 	osx "os"
@@ -36,7 +36,8 @@ func TestGeneration(t *tes.T) {
 	ass.Equal(t, source, actual)
 
 	// Generate the class files.
-	var classes = gen.GenerateModelClasses(model).GetIterator()
+	var generator = gen.ClassesGenerator().Make()
+	var classes = generator.GenerateModelClasses(model).GetIterator()
 	for classes.HasNext() {
 		var class = classes.GetNext()
 		var className = class.GetKey()

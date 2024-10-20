@@ -34,25 +34,25 @@ import (
 // Class Definitions
 
 /*
-ClassesClassLike is a class interface that defines the complete set of
+ClassesGeneratorClassLike is a class interface that defines the complete set of
 class constants, constructors and functions that must be supported by each
 concrete classes-like class.
 */
-type ClassesClassLike interface {
+type ClassesGeneratorClassLike interface {
 	// Constructor Methods
-	Make() ClassesLike
+	Make() ClassesGeneratorLike
 }
 
 // Instance Definitions
 
 /*
-ClassesLike is an instance interface that defines the complete set of
+ClassesGeneratorLike is an instance interface that defines the complete set of
 instance attributes, abstractions and methods that must be supported by each
 instance of a concrete classes-like class.
 */
-type ClassesLike interface {
+type ClassesGeneratorLike interface {
 	// Primary Methods
-	GetClass() ClassesClassLike
+	GetClass() ClassesGeneratorClassLike
 	GenerateModelClasses(
 		model mod.ModelLike,
 	) abs.CatalogLike[string, string]
