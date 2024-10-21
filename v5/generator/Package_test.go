@@ -20,11 +20,11 @@ import (
 	tes "testing"
 )
 
-var directory = "../testdata/"
+var directory = "../testdata/generator/"
 
 func TestGeneration(t *tes.T) {
-	// Read in the class model and validate it.
-	var filename = directory + "Package.go"
+	// Validate the class model.
+	var filename = "./Package.go"
 	var bytes, err = osx.ReadFile(filename)
 	if err != nil {
 		panic(err)
@@ -34,6 +34,21 @@ func TestGeneration(t *tes.T) {
 	mod.ValidateModel(model)
 	var actual = mod.FormatModel(model)
 	ass.Equal(t, source, actual)
+
+	// Recreate the package directory.
+	err = osx.RemoveAll(directory)
+	if err != nil {
+		panic(err)
+	}
+	err = osx.Mkdir(directory, 0755)
+	if err != nil {
+		panic(err)
+	}
+	filename = directory + "Package.go"
+	err = osx.WriteFile(filename, bytes, 0644)
+	if err != nil {
+		panic(err)
+	}
 
 	// Generate the class files.
 	var generator = gen.ClassesGenerator().Make()

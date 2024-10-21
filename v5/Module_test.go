@@ -22,9 +22,9 @@ import (
 )
 
 var testDirectories = []string{
-	"../../go-test-framework/v5/ast/",
-	"../../go-test-framework/v5/grammar/",
-	"../../go-test-framework/v5/example/",
+	"./testdata/ast/",
+	"./testdata/grammar/",
+	"./testdata/example/",
 }
 
 func TestGeneration(t *tes.T) {
