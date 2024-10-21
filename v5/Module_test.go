@@ -24,13 +24,14 @@ import (
 var testDirectories = []string{
 	"../../go-test-framework/v5/ast/",
 	"../../go-test-framework/v5/grammar/",
-	"../../go-test-framework/v5/generator/",
 	"../../go-test-framework/v5/example/",
 }
 
 func TestGeneration(t *tes.T) {
 	fmt.Println("Generating concrete classes for the following class models:")
 	for _, directory := range testDirectories {
+
+		// Validate the class model.
 		var filename = directory + "Package.go"
 		fmt.Printf("   %v\n", filename)
 		var bytes, err = osx.ReadFile(filename)
@@ -42,6 +43,22 @@ func TestGeneration(t *tes.T) {
 		mod.ValidateModel(model)
 		var actual = mod.FormatModel(model)
 		ass.Equal(t, source, actual)
+
+		// Recreate the package directory.
+		err = osx.RemoveAll(directory)
+		if err != nil {
+			panic(err)
+		}
+		err = osx.Mkdir(directory, 0755)
+		if err != nil {
+			panic(err)
+		}
+		err = osx.WriteFile(filename, bytes, 0644)
+		if err != nil {
+			panic(err)
+		}
+
+		// Generate the concrete class files for the class model.
 		var classes = gen.GenerateModelClasses(model).GetIterator()
 		for classes.HasNext() {
 			var association = classes.GetNext()

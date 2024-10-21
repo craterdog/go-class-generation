@@ -659,13 +659,9 @@ func (v *classesGenerator_) generateClass(
 		star,
 	)
 
-	// Insert generics if necessary.
-	var constraints string
-	var arguments string
-	if v.isGeneric_ {
-		constraints = v.generateConstraints(classDefinition)
-		arguments = v.generateArguments(classDefinition)
-	}
+	// Insert any generics.
+	var constraints = v.generateConstraints(classDefinition)
+	var arguments = v.generateArguments(classDefinition)
 	implementation = uti.ReplaceAll(
 		implementation,
 		"constraints",
@@ -1503,7 +1499,7 @@ func (v <*><~className>_<Arguments>) <~MethodName>(
 // Primary Methods
 
 func (v <*><~className>_<Arguments>) GetClass() <~ClassName>ClassLike<Arguments> {
-	return <~className>Reference()
+	return <~className>Reference<Arguments>()
 }<IntrinsicMethod><Methods>`,
 
 	intrinsicMethod_: `
