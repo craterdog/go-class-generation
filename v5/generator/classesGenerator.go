@@ -608,14 +608,6 @@ func (v *classesGenerator_) generateClass(
 		aspectInterfaces,
 	)
 
-	// Add in the instance private methods.
-	var privateMethods = v.generatePrivateMethods(instanceDefinition)
-	implementation = uti.ReplaceAll(
-		implementation,
-		"privateMethods",
-		privateMethods,
-	)
-
 	// Add in the private instance structure.
 	var instanceStructure = v.generateInstanceStructure()
 	implementation = uti.ReplaceAll(
@@ -1139,15 +1131,6 @@ func (v *classesGenerator_) generatePrimaryMethods(
 	return implementation
 }
 
-func (v *classesGenerator_) generatePrivateMethods(
-	instance mod.InstanceDefinitionLike,
-) (
-	implementation string,
-) {
-	implementation = classesGeneratorReference().privateMethods_
-	return implementation
-}
-
 func (v *classesGenerator_) generateResult(
 	result mod.ResultLike,
 ) (
@@ -1402,7 +1385,9 @@ var classesGeneratorReference_ = &classesGeneratorClass_{
 
 // INSTANCE INTERFACE<PrimaryMethods><AttributeMethods><AspectInterfaces>
 
-// PROTECTED INTERFACE<PrivateMethods><InstanceStructure><ClassStructure><ClassReference>
+// PROTECTED INTERFACE
+
+// Private Methods<InstanceStructure><ClassStructure><ClassReference>
 `,
 
 	packageDeclaration_: `
